@@ -105,11 +105,8 @@ playwright install chromium
 
 ### Docker Deployment
 ```bash
-docker build -t thebubblesnitchbot:latest .
-docker run -d --name bmbot \
-  -p 10000:10000 \
-  -e TELEGRAM_TOKEN=your_token \
-  bubblemaps-bot
+docker build -t thebubblesnitchbot .
+docker run -it --rm -e TELEGRAM_TOKEN=your_token thebubblesnitchbot
 ```
 
 <a name="4-configuration"></a>
