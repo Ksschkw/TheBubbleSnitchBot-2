@@ -2,11 +2,12 @@ FROM python:3.11-slim
 
 ENV PYTHONUNBUFFERED=1 \
     PIP_NO_CACHE_DIR=1
-
-# System deps
 RUN apt-get update \
  && apt-get install -y --no-install-recommends \
-    xvfb \
+    xvfb          \   
+    # X virtual framebuffer
+    xauth         \   
+    # for xvfb-run’s auth
     ca-certificates \
     fonts-liberation \
     libasound2 \
@@ -20,34 +21,27 @@ RUN apt-get update \
     libnspr4 \
     libnss3 \
     libx11-xcb1 \
-    xauth \
     libxcomposite1 \
     libxdamage1 \
     libxrandr2 \
     libxi6 \
     libxss1 \
     libgconf-2-4 \
-    wget \
-    unzip \
-    curl \
-    gcc \
-    g++ \
-    make \
-    python3-dev \
+    wget unzip curl \
+    gcc g++ make python3-dev \  
+    # for any native Python extensions
  && rm -rf /var/lib/apt/lists/*
 
-WORKDIR /app
-
-# Install Python dependencies first (to benefit from Docker layer caching)
 COPY requirements.txt .
-RUN pip install -r requirements.txt
-
-# Install Playwright + Chromium browsers
-RUN pip install playwright && playwright install --with-deps chromium
+RUN pip install --upgrade pip \
+ && pip install -r requirements.txt
 
 
-# Your code
+RUN pip install playwright \
+ && playwright install --with-deps chromium
+
 COPY . .
-COPY .env .
-# Entrypoint
-CMD ["xvfb-run", "python", "bot.py"]
+
+COPY start.sh /app/start.sh
+RUN chmod +x /app/start.sh
+ENTRYPOINT ["/app/start.sh"]
