@@ -107,7 +107,7 @@ View full implementation in `core/playwright_screenshot.py`
 ## 6. Methodology & Reproducibility  
 1. **Clone & Install**  
    ```bash
-   git clone YOUR_REPO_URL && cd YOUR_REPO
+   git clone https://github.com/Ksschkw/TheBubbleSnitchBot-2 && cd YOUR_REPO
    pip install -r requirements.txt
    playwright install chromium
    ```   
