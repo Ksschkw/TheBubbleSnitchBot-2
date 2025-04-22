@@ -27,17 +27,14 @@ thebubblesnitchbot wraps Bubblemaps’ power into Telegram, using `python-telegr
 ## 3. Architecture Overview  
 ```mermaid
 graph LR
-    A[User (Telegram App)] -->|Sends Command| B[Telegram Servers]
-    B -->|Stores Message| B
-    C[Bot Server (Railway)] -->|Periodically Polls| B
-    B -->|Returns Updates| C
-    C -->|Processes Command| D[Command Handler]
-    D -->|Fetches Data| E[External APIs]
-    E -->|Returns Data| D
-    D -->|Analyzes Data| F[Risk Assessment Engine]
-    F -->|Generates Report| G[Playwright (Headless Browser)]
-    G -->|Captures Screenshot| H[Bubble Map Image]
-    H -->|Sends Response| A
+    A[User (Telegram App)] --> B[Telegram Servers]
+    B --> C[Bot Server (Railway)]
+    C --> D[Command Handler]
+    D --> E[External APIs]
+    E --> F[Risk Assessment Engine]
+    F --> G[Playwright (Headless Browser)]
+    G --> H[Bubble Map Image]
+    H --> A
 ```
 *Figure 1: End‑to‑end data flow from Telegram → Playwright → Bubblemaps & APIs → Telegram.*  
 
