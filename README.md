@@ -153,16 +153,43 @@ def compute_risk(score, vol, cex, contract):
 ### Caching Strategy
 ```mermaid
 sequenceDiagram
-    User->>Bot: /check eth 0x...
-    Bot->>Cache: Check existence
-    alt Cache Hit
-        Cache-->>Bot: Return cached data
-    else Cache Miss
-        Bot->>Bubblemaps: API Request
-        Bubblemaps-->>Bot: Fresh data
-        Bot->>Cache: Store with TTL
+    participant User
+    participant Bot
+    participant Cache
+    participant API
+    
+    User->>Bot: Command (e.g. /check eth 0x...)
+    
+    Bot->>Cache: Generate Key: (fn_name, args, frozenset(kwargs))
+    activate Cache
+    Note right of Cache: Key = (fetch_bubble, ("eth","0x..."), frozenset())
+    
+    alt Cache Hit (Valid TTL)
+        Cache-->>Bot: Return CACHE[key][1]
+        deactivate Cache
+    else Cache Miss/Expired
+        Cache-->>Bot: None
+        deactivate Cache
+        
+        Bot->>API: Async HTTP Request
+        activate API
+        API-->>Bot: Raw JSON Response
+        deactivate API
+        
+        Bot->>Cache: Store (timestamp, data)
+        activate Cache
+        Note right of Cache: CACHE[key] = (time.time(), res)
+        deactivate Cache
     end
-    Bot-->>User: Response
+    
+    Bot->>User: Formatted Response
+    
+    loop Every CACHE_EXPIRY seconds
+        Bot->>Cache: cleanup_cache()
+        activate Cache
+        Note right of Cache: Del keys where (now - timestamp) > EXPIRY
+        deactivate Cache
+    end
 ```
 
 <a name="6-operational-guide"></a>
