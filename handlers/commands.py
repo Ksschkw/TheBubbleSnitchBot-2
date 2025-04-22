@@ -104,11 +104,15 @@ async def trending(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "No tokens in global favorites yet. Add some tokens to watch the trending list! 🔥"
         )
 
+# bubble = await fetch_bubble(chain, address)
+# name = bubble.get("full_name", "N/A")
     data = []
     for (chain, addr), _count in GLOBAL_FAVS.items():
+        bubble = await fetch_bubble(chain, addr)
+        name = bubble.get("full_name", "N/A")
         md = await fetch_market(chain, addr)
         if md:
-            data.append({"chain": chain, "address": addr, "vol": md.get("vol", 0), "price": md.get("price", 0)})
+            data.append({"chain": chain, "name":name, "address": addr, "vol": md.get("vol", 0), "price": md.get("price", 0)})
 
     if not data:
         return await update.message.reply_text("No valid market data available for trending tokens.")
@@ -117,7 +121,7 @@ async def trending(update: Update, context: ContextTypes.DEFAULT_TYPE):
     lines = ["🔥 **Trending Tokens (by volume)** 🔥"]
     for i, t in enumerate(data[:5], start=1):
         url = f"https://app.bubblemaps.io/{t['chain']}/token/{t['address']}"
-        lines.append(f"{i}. {t['chain'].upper()} -{t['address']}– Volume: ${t['vol']} – Price: ${t['price']} – [View Map]({url})")
+        lines.append(f"{i}. {t['chain'].upper()} -{t['name']}– Volume: ${t['vol']} – Price: ${t['price']} – [View Map]({url})")
 
     await update.message.reply_text("\n".join(lines), parse_mode="Markdown")
 

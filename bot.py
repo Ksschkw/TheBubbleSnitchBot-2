@@ -9,12 +9,6 @@ from handlers.commands import start_cmd, help_cmd, add_favorite, list_favorites,
 from handlers.tutorial import tutorial_start, tutorial_callback, register_tutorial
 from handlers.typos_and_messages import handle_contract_address, handle_typos
 
-# import logging
-# logging.basicConfig(
-#     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-#     level=logging.DEBUG
-# )
-
 load_dotenv()
 TOKEN = os.getenv("TELEGRAM_TOKEN")
 if not TOKEN:

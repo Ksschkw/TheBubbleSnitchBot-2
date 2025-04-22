@@ -146,7 +146,7 @@ async def handle_contract_address(update: Update, context: ContextTypes.DEFAULT_
         f"**Token**: {name} ({sym}) 💎\n"
         f"**Chain**: {chain.upper()} 🔗\n"
         f"**Decentralization Score**: {score}/100 ⭐\n"
-        f"**Identified Supply**: {cex_pct}% CEX 🏦, {contract_pct}% Contracts 📜\n\n"
+        f"**Identified Supply**:\n {cex_pct}% in CEX 🏦 ,\n {contract_pct}% in Contracts 📜\n\n"
         f"**Price**: ${price} 💲\n"
         f"**Market Cap**: ${cap} 💰\n"
         f"**Volume**: ${vol} 📊\n"

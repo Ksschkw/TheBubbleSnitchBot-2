@@ -47,11 +47,11 @@ async def take_screenshot(chain: str, address: str, bundle) -> str | None:
         print("🔍 Targeting MDC dialog structure")
         try:
             # Wait for dialog container
-            await page.wait_for_selector("div.mdc-dislog_actions", state="visible", timeout=5000)
+            await page.wait_for_selector("div.mdc-dialog_actions", state="visible", timeout=5000)
             
             # Precise selector for close button
             close_btn = await page.wait_for_selector(
-                "xpath=//div[contains(@class, 'mdc-dislog_actions')]//button[.//div[text()='close']]",
+                "xpath=//div[contains(@class, 'mdc-dialog_actions')]//button[.//div[text()='close']]",
                 state="visible",
                 timeout=3000
             )
@@ -78,7 +78,7 @@ async def take_screenshot(chain: str, address: str, bundle) -> str | None:
         print("🔧 Attempting fallback methods")
         try:
             # Try alternative selectors
-            await page.click("button[data-mdc-dislog-action='discard']", timeout=2000)
+            await page.click("button[data-mdc-dialog-action='discard']", timeout=2000)
             print("✅ Closed using data attribute")
             popup_closed = True
         except:
@@ -88,7 +88,7 @@ async def take_screenshot(chain: str, address: str, bundle) -> str | None:
     if popup_closed:
         print("🕒 Waiting for dialog dismissal")
         try:
-            await page.wait_for_selector("div.mdc-dislog_actions", state="hidden", timeout=3000)
+            await page.wait_for_selector("div.mdc-dialog_actions", state="hidden", timeout=3000)
             print("🔍 Verified dialog closed")
         except:
             print("⚠️ Dialog might still be present")
@@ -100,7 +100,7 @@ async def take_screenshot(chain: str, address: str, bundle) -> str | None:
             path=path,
             full_page=True,
             animations="disabled",
-            mask=[page.locator("div.mdc-dislog_actions")]
+            mask=[page.locator("div.mdc-dialog_actions")]
         )
         print(f"✅ Screenshot saved: {path}")
         return path
