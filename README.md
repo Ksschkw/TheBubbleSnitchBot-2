@@ -133,21 +133,21 @@ LOG_LEVEL=INFO     # DEBUG/INFO/WARNING
 ### Risk Scoring Algorithm
 ```python
 def compute_risk(score, vol, cex, contract):
-    weights = {
-        'decentralization': 0.4,
-        'liquidity': 0.3,
-        'cex_exposure': 0.2,
-        'contract_risk': 0.1
-    }
-    
-    normalized = (
-        (score/100 * weights['decentralization']) +
-        (min(vol/1e6, 1) * weights['liquidity']) -
-        (cex/100 * weights['cex_exposure']) -
-        (contract/100 * weights['contract_risk'])
+    # Weighted multi-factor analysis
+    risk_score = (
+        0.5 * (score/100) +          # Decentralization (50% weight)
+        0.2 * (1 - cex/100) +        # CEX exposure (20% weight)
+        0.2 * (1 - contract/100) +   # Contract risk (20% weight)
+        0.1 * (min(vol/5e6, 1))     # Liquidity (10% weight, $5M cap)
     )
-    
-    return "🟢 Low" if normalized > 0.7 else "🟡 Medium" if normalized > 0.4 else "🔴 High"
+    if risk_score >= 0.75:
+        return "🟢 Low"              # >75% composite score
+    elif risk_score >= 0.55:
+        return "🟡 Medium"           # 55-74% composite score
+    elif risk_score >= 0.35:
+        return "🟠 Elevated"         # New tier for granularity
+    else:
+        return "🔴 High"             # <35% composite score
 ```
 
 ### Caching Strategy
