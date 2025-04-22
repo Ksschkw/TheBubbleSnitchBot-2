@@ -73,7 +73,6 @@ RAM: 512MB
 Storage: 1GB
 OS: Linux/Windows/macOS (Docker recommended)
 ```
-```markdown
 ### Dependency Matrix
 | Package | Version | Purpose |
 |---------|---------|---------|
