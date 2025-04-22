@@ -37,7 +37,7 @@ async def take_screenshot(chain: str, address: str, bundle) -> str | None:
     print(f"🌐 Navigating to {url}")
     
     try:
-        await page.goto(url, timeout=60000, wait_until="networkidle")
+        await page.goto(url, timeout=60000, wait_until="domcontentloaded")
         print("🟢 Navigation complete")
     except Exception as nav_err:
         print(f"⚠️ Navigation warning: {nav_err}")

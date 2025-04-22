@@ -117,7 +117,7 @@ async def trending(update: Update, context: ContextTypes.DEFAULT_TYPE):
     lines = ["🔥 **Trending Tokens (by volume)** 🔥"]
     for i, t in enumerate(data[:5], start=1):
         url = f"https://app.bubblemaps.io/{t['chain']}/token/{t['address']}"
-        lines.append(f"{i}. {t['chain'].upper()} – Volume: ${t['vol']} – Price: ${t['price']} – [View Map]({url})")
+        lines.append(f"{i}. {t['chain'].upper()} -{t['address']}– Volume: ${t['vol']} – Price: ${t['price']} – [View Map]({url})")
 
     await update.message.reply_text("\n".join(lines), parse_mode="Markdown")
 
