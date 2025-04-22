@@ -29,13 +29,13 @@ thebubblesnitchbot wraps Bubblemaps’ power into Telegram, using `python-telegr
 graph LR
     A[User-Telegram App] -->|Sends Command| B[Telegram Servers]
     B -->|Stores Message| B
-    C[Bot Server (Railway)] -->|Periodically Polls| B
+    C[Bot Server-Railway] -->|Periodically Polls| B
     B -->|Returns Updates| C
     C -->|Processes Command| D[Command Handler]
     D -->|Fetches Data| E[External APIs]
     E -->|Returns Data| D
     D -->|Analyzes Data| F[Risk Assessment Engine]
-    F -->|Generates Report| G[Playwright (Headless Browser)]
+    F -->|Generates Report| G[Playwright-Headless Browser]
     G -->|Captures Screenshot| H[Bubble Map Image]
     H -->|Sends Response| A
 ```
