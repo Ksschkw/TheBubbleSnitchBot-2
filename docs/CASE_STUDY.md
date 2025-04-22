@@ -26,7 +26,7 @@ thebubblesnitchbot wraps Bubblemaps’ power into Telegram, using `python-telegr
 
 ## 3. Architecture Overview  
 ```mermaid
-graph TD
+graph LR
     A[User (Telegram App)] -->|Sends Command| B[Telegram Servers]
     B -->|Stores Message| B
     C[Bot Server (Railway)] -->|Periodically Polls| B
