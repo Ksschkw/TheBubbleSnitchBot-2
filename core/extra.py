@@ -23,6 +23,18 @@ def get_stats(user_favs:List[dict]) -> str:
     )
 
 def compute_risk(score, vol, cex, contract):
-    if score>80 and cex<10: return "🟢 Low"
-    if score>50:              return "🟡 Medium"
-    return "🔴 High"
+    # Weighted multi-factor analysis
+    risk_score = (
+        0.5 * (score/100) +          # Decentralization (50% weight)
+        0.2 * (1 - cex/100) +        # CEX exposure (20% weight)
+        0.2 * (1 - contract/100) +   # Contract risk (20% weight)
+        0.1 * (min(vol/5e6, 1))     # Liquidity (10% weight, $5M cap)
+    )
+    if risk_score >= 0.75:
+        return "🟢 Low"              # >75% composite score
+    elif risk_score >= 0.55:
+        return "🟡 Medium"           # 55-74% composite score
+    elif risk_score >= 0.35:
+        return "🟠 Elevated"         # New tier for granularity
+    else:
+        return "🔴 High"             # <35% composite score
