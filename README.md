@@ -2,6 +2,7 @@
 
 A Telegram bot for analyzing crypto tokens using Bubblemaps data. Generates bubble maps, provides market insights, and risk assessments.  
 **Demo Bot**: [@TheBubbleSnitch_bot](t.me/TheBubbleSnitch_bot) 
+**📖 Case Study**: Read the detailed write‑up [here](docs/CASE_STUDY.md).
 
 ## Table of Contents
 1. [Technical Overview](#1-technical-overview)  
