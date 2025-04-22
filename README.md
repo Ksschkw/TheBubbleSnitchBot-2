@@ -31,7 +31,7 @@ A Telegram bot for analyzing crypto tokens using Bubblemaps data. Generates bubb
 - **Auto-Generated Bubble Maps** using headless browser
 - **Real-Time Market Data** (Price/Volume/Market Cap)
 - **Decentralization Score** (0-100 scale)
-- **AI Risk Assessment** (🟢 Low/🟡 Medium/🔴 High)
+- **AI Risk Assessment** (🟢 Low/🟡 Medium/🟠 Elevated/🔴 High)
 - **Favorites System** with price alerts
 - **Trending Tokens** leaderboard
 - **Tutorial** for everday users
@@ -62,7 +62,7 @@ A Telegram bot for analyzing crypto tokens using Bubblemaps data. Generates bubb
 
 ## 🖼️ Example Output
 ![Analysis Example](imagedforreadme/example.png) 
-```markdown
+
 <a name="2-system-requirements"></a>
 ## 2. System Requirements
 
@@ -73,7 +73,7 @@ RAM: 512MB
 Storage: 1GB
 OS: Linux/Windows/macOS (Docker recommended)
 ```
-
+```markdown
 ### Dependency Matrix
 | Package | Version | Purpose |
 |---------|---------|---------|
