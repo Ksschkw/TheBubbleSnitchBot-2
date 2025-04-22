@@ -157,37 +157,37 @@ sequenceDiagram
     participant Bot
     participant Cache
     participant API
-    
+
     User->>Bot: Command (e.g. /check eth 0x...)
-    
-    Bot->>Cache: Generate Key: (fn_name, args, frozenset(kwargs))
+
+    Bot->>Cache: Generate Key
     activate Cache
-    Note right of Cache: Key = (fetch_bubble, ("eth","0x..."), frozenset())
-    
+    Cache-->>Bot: Key Generated
+    deactivate Cache
+
     alt Cache Hit (Valid TTL)
-        Cache-->>Bot: Return CACHE[key][1]
+        Bot->>Cache: Retrieve Data
+        activate Cache
+        Cache-->>Bot: Cached Data
         deactivate Cache
     else Cache Miss/Expired
-        Cache-->>Bot: None
-        deactivate Cache
-        
         Bot->>API: Async HTTP Request
         activate API
         API-->>Bot: Raw JSON Response
         deactivate API
-        
-        Bot->>Cache: Store (timestamp, data)
+
+        Bot->>Cache: Store Data
         activate Cache
-        Note right of Cache: CACHE[key] = (time.time(), res)
+        Cache-->>Bot: Data Stored
         deactivate Cache
     end
-    
+
     Bot->>User: Formatted Response
-    
+
     loop Every CACHE_EXPIRY seconds
         Bot->>Cache: cleanup_cache()
         activate Cache
-        Note right of Cache: Del keys where (now - timestamp) > EXPIRY
+        Cache-->>Bot: Cleanup Complete
         deactivate Cache
     end
 ```
