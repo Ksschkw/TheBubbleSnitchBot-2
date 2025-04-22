@@ -1,9 +1,8 @@
-```markdown
 # 🗺️ Bubblemaps Telegram Bot
 
 A Telegram bot for analyzing crypto tokens using Bubblemaps data. Generates bubble maps, provides market insights, and risk assessments.  
 **Demo Bot**: [@TheBubbleSnitch_bot](t.me/TheBubbleSnitch_bot) 
-
+```markdown
 ## Table of Contents
 1. [Technical Overview](#1-technical-overview)  
 2. [System Requirements](#2-system-requirements)  
@@ -27,6 +26,7 @@ A Telegram bot for analyzing crypto tokens using Bubblemaps data. Generates bubb
 | Analysis Engine | Risk scoring & pattern detection | Custom algorithms |
 | Visualization | Bubblemaps screenshot generation | `Playwright`, `Xvfb` |
 | Caching System | Reduce API calls & latency | Memory-based LRU cache |
+```
 ## 🚀 Key Features
 - **Auto-Generated Bubble Maps** using headless browser
 - **Real-Time Market Data** (Price/Volume/Market Cap)
@@ -62,7 +62,7 @@ A Telegram bot for analyzing crypto tokens using Bubblemaps data. Generates bubb
 
 ## 🖼️ Example Output
 ![Analysis Example](imagedforreadme/example.png) 
-
+```markdown
 <a name="2-system-requirements"></a>
 ## 2. System Requirements
 
