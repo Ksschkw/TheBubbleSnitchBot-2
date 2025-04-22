@@ -283,4 +283,7 @@ git checkout -b feature/your-feature
 - Type hints for all functions
 - Docstrings following Google style
 - Unit test coverage >80%
+
+## 📜 License
+MIT License - See LICENSE
 ```
