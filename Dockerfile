@@ -2,49 +2,44 @@ FROM python:3.11-slim
 
 ENV PYTHONUNBUFFERED=1 \
     PIP_NO_CACHE_DIR=1
+
+# Install system dependencies including Xvfb
 RUN apt-get update \
  && apt-get install -y --no-install-recommends \
-    xvfb          \   
-    # X virtual framebuffer
-    xauth         \   
-    # for xvfb-run’s auth
+    xvfb \
+    xauth \
     ca-certificates \
     fonts-liberation \
     libasound2 \
-    libatk-bridge2.0-0 \
     libatk1.0-0 \
     libcups2 \
     libdbus-1-3 \
-    libdrm2 \
-    libgbm1 \
-    libgtk-3-0 \
-    libnspr4 \
-    libnss3 \
     libx11-xcb1 \
     libxcomposite1 \
     libxdamage1 \
-    libxrandr2 \
     libxi6 \
-    libxss1 \
-    libgconf-2-4 \
-    wget unzip curl \
-    gcc g++ make python3-dev \  
-    # for any native Python extensions
+    libxext6 \
+    libxrender1 \
+    libxrandr2 \
+    libxtst6 \
+    libgl1-mesa-glx \
+    gcc g++ make python3-dev \
+    wget curl \
  && rm -rf /var/lib/apt/lists/*
 
+# Install Python dependencies
 COPY requirements.txt .
 RUN pip install --upgrade pip \
  && pip install -r requirements.txt
 
-
-RUN pip install playwright \
- && playwright install --with-deps chromium
-
+# Copy application files
 COPY . .
 
+# Set up dummy server port
 ENV PORT=10000
 EXPOSE 10000
 
+# Configure entrypoint
 COPY start.sh /app/start.sh
 RUN chmod +x /app/start.sh
 ENTRYPOINT ["/app/start.sh"]
