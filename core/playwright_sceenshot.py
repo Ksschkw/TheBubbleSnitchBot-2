@@ -7,12 +7,32 @@ sys.stdout.reconfigure(encoding="utf-8")
 
 async def init_browser(app):
     playwright = await async_playwright().start()
-    browser = await playwright.chromium.launch(headless=False)
+    browser = await playwright.chromium.launch(
+        headless=True,
+        args=[
+            '--no-sandbox',
+            '--disable-dev-shm-usage',
+            '--disable-gpu',
+            '--single-process',
+            '--use-angle=vulkan',
+            '--enable-features=Vulkan',
+            '--disable-software-rasterizer',
+            '--disable-setuid-sandbox',
+            '--no-zygote'
+        ],
+        timeout=60000
+    )
     context = await browser.new_context(
         viewport={"width": 1280, "height": 720},
-        user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36"
+        user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36",
+        java_script_enabled=True
     )
     page = await context.new_page()
+    await page.add_init_script("""
+        Object.defineProperty(navigator, 'webdriver', {
+            get: () => undefined
+        })
+    """)
     app.bot_data["browser"] = {
         "playwright": playwright,
         "browser": browser,
