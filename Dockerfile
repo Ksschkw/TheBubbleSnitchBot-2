@@ -1,18 +1,22 @@
 FROM python:3.11-slim
 
-# Add build arguments for headless environment
-ARG DEBIAN_FRONTEND=noninteractive
-ARG PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
-
+# Essential environment variables
 ENV PYTHONUNBUFFERED=1 \
     PIP_NO_CACHE_DIR=1 \
-    PLAYWRIGHT_BROWSERS_PATH=$PLAYWRIGHT_BROWSERS_PATH \
-    DISPLAY=:99
+    DISPLAY=:99 \
+    TZ=UTC \
+    LANG=en_US.UTF-8 \
+    LANGUAGE=en_US:en \
+    LC_ALL=en_US.UTF-8
 
-# Install system dependencies with precise versioning
+# Install system dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
     xvfb \
+    x11vnc \
     xauth \
+    xfonts-100dpi \
+    xfonts-75dpi \
+    xfonts-scalable \
     libgl1-mesa-glx \
     libgl1-mesa-dri \
     libegl1 \
@@ -33,21 +37,24 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libxshmfence1 \
     libwayland-client0 \
     libwayland-server0 \
-    libharfbuzz0b \
-    # Font dependencies
-    fonts-liberation fonts-noto-color-emoji \
-    # Build essentials
-    gcc g++ make python3-dev \
-    # Cleanup
-    && rm -rf /var/lib/apt/lists/*
+    fonts-noto-core \
+    fonts-noto-extra \
+    fonts-noto-color-emoji \
+    fonts-freefont-ttf \
+    gcc \
+    g++ \
+    make \
+    python3-dev \
+    && rm -rf /var/lib/apt/lists/* \
+    && localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8
 
-# Install Python dependencies first for better layer caching
+# Install Python dependencies
 COPY requirements.txt .
 RUN pip install --upgrade pip \
     && pip install -r requirements.txt \
-    && pip install playwright
+    && pip install playwright==1.42.0
 
-# Install Chromium with all dependencies
+# Install Chromium with dependencies
 RUN playwright install --with-deps chromium
 
 # Copy application files
