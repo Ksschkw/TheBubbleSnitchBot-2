@@ -51,7 +51,7 @@ async def take_screenshot(chain: str, address: str, bundle) -> str | None:
     print(f"🌐 Navigating to {url}")
 
     try:
-        await page.goto(url, timeout=60000, wait_until="domcontentloaded")
+        await page.goto(url, timeout=120000, wait_until="domcontentloaded")
         print("🟢 Navigation complete")
     except Exception as nav_err:
         print(f"⚠️ Navigation warning: {nav_err}")
@@ -61,13 +61,13 @@ async def take_screenshot(chain: str, address: str, bundle) -> str | None:
         print("🔍 Targeting MDC dialog structure")
         try:
             # Wait for dialog container
-            await page.wait_for_selector("div.mdc-dialog_actions", state="visible", timeout=5000)
+            await page.wait_for_selector("div.mdc-dialog_actions", state="visible", timeout=10000)
 
             # Precise selector for close button
             close_btn = await page.wait_for_selector(
                 "xpath=//div[contains(@class, 'mdc-dialog_actions')]//button[.//div[text()='close']]",
                 state="visible",
-                timeout=3000
+                timeout=6000
             )
 
             # Scroll and click with human-like delay
@@ -92,7 +92,7 @@ async def take_screenshot(chain: str, address: str, bundle) -> str | None:
         print("🔧 Attempting fallback methods")
         try:
             # Try alternative selectors
-            await page.click("button[data-mdc-dialog-action='discard']", timeout=2000)
+            await page.click("button[data-mdc-dialog-action='discard']", timeout=4000)
             print("✅ Closed using data attribute")
             popup_closed = True
         except:
@@ -102,7 +102,7 @@ async def take_screenshot(chain: str, address: str, bundle) -> str | None:
     if popup_closed:
         print("🕒 Waiting for dialog dismissal")
         try:
-            await page.wait_for_selector("div.mdc-dialog_actions", state="hidden", timeout=3000)
+            await page.wait_for_selector("div.mdc-dialog_actions", state="hidden", timeout=6000)
             print("🔍 Verified dialog closed")
         except:
             print("⚠️ Dialog might still be present")
