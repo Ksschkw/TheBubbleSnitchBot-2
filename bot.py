@@ -1,7 +1,7 @@
 import os
 import datetime
 import asyncio
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 from telegram.ext import Application, CommandHandler, MessageHandler, CallbackQueryHandler, filters
 from core.cache import cleanup_cache
 from core.playwright_sceenshot import init_browser, shutdown_browser
