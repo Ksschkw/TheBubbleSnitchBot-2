@@ -1,48 +1,43 @@
 FROM python:3.11-slim
 
-# Add Vulkan and updated dependencies
 ENV PYTHONUNBUFFERED=1 \
-    PIP_NO_CACHE_DIR=1 \
-    PLAYWRIGHT_BROWSERS_PATH=/ms-playwright \
-    VK_ICD_FILENAMES=/usr/share/vulkan/icd.d/intel_icd.x86_64.json
+    PIP_NO_CACHE_DIR=1
 
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    xvfb \
-    xauth \
-    libgl1-mesa-glx \
-    libgl1-mesa-dri \
-    vulkan-tools \
-    mesa-vulkan-drivers \
-    libvulkan1 \
-    libxcb-randr0 \
-    libxcb-xfixes0 \
-    libxshmfence1 \
-    libwayland-client0 \
-    libwayland-server0 \
+# Install system dependencies for matplotlib and general requirements
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends \
+    ca-certificates \
+    fonts-liberation \
+    libasound2 \
+    libatk1.0-0 \
+    libcups2 \
+    libdbus-1-3 \
+    libx11-xcb1 \
     libxcomposite1 \
     libxdamage1 \
-    libxfixes3 \
+    libxi6 \
+    libxext6 \
+    libxrender1 \
     libxrandr2 \
-    libgbm1 \
-    libgtk-3-0 \
-    libdrm2 \
-    libasound2 \
-    libnss3 \
-    libatk1.0-0 \
-    fonts-noto-core \
-    fonts-freefont-ttf \
+    libxtst6 \
+    libgl1-mesa-glx \
     gcc g++ make python3-dev \
-    && rm -rf /var/lib/apt/lists/*
+    wget curl \
+ && rm -rf /var/lib/apt/lists/*
 
+# Install Python dependencies
 COPY requirements.txt .
 RUN pip install --upgrade pip \
-    && pip install -r requirements.txt \
-    && pip install playwright==1.42.0
+ && pip install -r requirements.txt
 
-RUN playwright install --with-deps chromium
-
+# Copy application files
 COPY . .
 
+# Set up dummy server port
+ENV PORT=10000
+EXPOSE 10000
+
+# Configure entrypoint
 COPY start.sh /app/start.sh
 RUN chmod +x /app/start.sh
 ENTRYPOINT ["/app/start.sh"]
