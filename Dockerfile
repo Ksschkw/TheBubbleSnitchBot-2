@@ -1,48 +1,50 @@
 FROM python:3.11-slim
 
-# Essential environment variables
 ENV PYTHONUNBUFFERED=1 \
-    PIP_NO_CACHE_DIR=1 \
-    PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
-
-# Install system dependencies first
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    xvfb \
-    xauth \
-    libgl1-mesa-glx \
-    libgl1-mesa-dri \
-    libnss3 \
-    libatk1.0-0 \
+    PIP_NO_CACHE_DIR=1
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends \
+    xvfb          \   
+    # X virtual framebuffer
+    xauth         \   
+    # for xvfb-run’s auth
+    ca-certificates \
+    fonts-liberation \
+    libasound2 \
     libatk-bridge2.0-0 \
+    libatk1.0-0 \
+    libcups2 \
+    libdbus-1-3 \
+    libdrm2 \
+    libgbm1 \
+    libgtk-3-0 \
+    libnspr4 \
+    libnss3 \
     libx11-xcb1 \
     libxcomposite1 \
     libxdamage1 \
-    libxfixes3 \
     libxrandr2 \
-    libgbm1 \
-    libasound2 \
-    fonts-noto-core \
-    fonts-freefont-ttf \
-    gcc \
-    g++ \
-    make \
-    python3-dev \
-    && rm -rf /var/lib/apt/lists/*
+    libxi6 \
+    libxss1 \
+    libgconf-2-4 \
+    wget unzip curl \
+    gcc g++ make python3-dev \  
+    # for any native Python extensions
+ && rm -rf /var/lib/apt/lists/*
 
-# Install Python packages from requirements.txt
 COPY requirements.txt .
 RUN pip install --upgrade pip \
-    && pip install -r requirements.txt  # This MUST include python-dotenv
+ && pip install -r requirements.txt
 
-# Install Playwright and Chromium
+
 RUN pip install playwright \
-    && playwright install --with-deps chromium
+ && playwright install --with-deps chromium
 
-# Copy application files
 COPY . .
 
-# Configure entrypoint
+ENV PORT=10000
+EXPOSE 10000
+
 COPY start.sh /app/start.sh
 RUN chmod +x /app/start.sh
-
 ENTRYPOINT ["/app/start.sh"]
