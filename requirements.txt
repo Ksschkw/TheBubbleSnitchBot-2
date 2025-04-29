@@ -1,6 +1,6 @@
 python-telegram-bot==20.3
 aiohttp==3.8.4
 webdriver-manager
-python-dotenv==1.0.0
+python-dotenv
 playwright==1.43.0
 python-telegram-bot[callback-data,job-queue]==20.3
