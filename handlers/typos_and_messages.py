@@ -1,5 +1,6 @@
 # handlers/typos_and_messages.py
 
+import logging
 import os
 from difflib import get_close_matches
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
@@ -89,79 +90,182 @@ async def handle_typos(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def handle_contract_address(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    parts = update.message.text.strip().split()
-    if len(parts) not in (1, 2):
-        return await update.message.reply_text(
-            "Invalid format. Use: `<chain> <address>` or `<address>` (defaults to ETH)."
-        )
-
-    # parse chain/address
-    if len(parts) == 1:
-        chain, address = "eth", parts[0]
-    else:
-        chain, address = parts[0].lower(), parts[1]
-
-    if chain not in SUPPORTED_CHAINS:
-        return await update.message.reply_text(
-            f"Unsupported chain. Supported: {', '.join(SUPPORTED_CHAINS)}"
-        )
-    if not validate_address(chain, address):
-        return await update.message.reply_text("Invalid address format for this chain.")
-
-    # fetch data
-    bubble = await fetch_bubble(chain, address)
-    meta = await fetch_meta(chain, address)
-    market = await fetch_market(chain, address)
-
-    if not bubble or not meta:
-        return await update.message.reply_text("Error fetching data. Token may not be supported.")
-
-    # screenshot
-    screenshot = await generate_screenshot(chain, address, context)
-    if not screenshot:
-        return await update.message.reply_text("Failed to generate map.")
-
-    # build caption
-    name = bubble.get("full_name", "N/A")
-    sym = bubble.get("symbol", "N/A")
-    score = meta.get("score", "N/A")
-    cex_pct = meta.get("cex", "N/A")
-    contract_pct = meta.get("contract", "N/A")
-    price = market.get("price", "N/A") if market else "N/A"
-    cap = market.get("cap", "N/A") if market else "N/A"
-    vol = market.get("vol", "N/A") if market else "N/A"
-
-    # compute risk
     try:
-        _score = float(score)
-        _vol = float(vol)
-        _cex = float(cex_pct)
-        _contract = float(contract_pct)
-    except Exception:
-        _score = _vol = _cex = _contract = 0
-    risk = compute_risk(_score, _vol, _cex, _contract)
+        text = update.message.text.strip().split()
+        if len(text) != 2:
+            await update.message.reply_text("Please provide: <chain> <address>")
+            return
+        chain, address = text
+        chain = chain.lower()
+        if chain not in SUPPORTED_CHAINS:
+            await update.message.reply_text(f"Unsupported chain. Supported: {', '.join(SUPPORTED_CHAINS)}")
+            return
 
-    caption = (
-        f"🔍 **SUPPLY ANALYSIS** 🔍\n\n"
-        f"**Token**: {name} ({sym}) 💎\n"
-        f"**Chain**: {chain.upper()} 🔗\n"
-        f"**Decentralization Score**: {score}/100 ⭐\n"
-        f"**Identified Supply**:\n {cex_pct}% in CEX 🏦 ,\n {contract_pct}% in Contracts 📜\n\n"
-        f"**Price**: ${price} 💲\n"
-        f"**Market Cap**: ${cap} 💰\n"
-        f"**Volume**: ${vol} 📊\n"
-        f"**Risk Level**: {risk}"
-    )
-    url = f"https://app.bubblemaps.io/{chain}/token/{address}"
-    keyboard = InlineKeyboardMarkup([[InlineKeyboardButton("🔗 View Bubblemap", url=url)]])
+        bubble = await fetch_bubble(chain, address)
+        meta = await fetch_meta(chain, address)
+        market = await fetch_market(chain, address)
+        if not bubble or not meta or not market:
+            await update.message.reply_text("Failed to fetch token data.")
+            return
 
-    # send and clean up
-    with open(screenshot, "rb") as img:
-        await update.message.reply_photo(
-            photo=img,
-            caption=caption,
-            parse_mode="Markdown",
-            reply_markup=keyboard,
+        # Store token context
+        context.user_data['current_token'] = {'chain': chain, 'address': address}
+
+        # Top holders (top 3 for brevity)
+        nodes = bubble.get('nodes', [])
+        top_holders_text = "🏆 **Top Holders** 🏆\n" + (
+            "\n".join(
+                f"{i}. {n['address'][:6]}...{n['address'][-4:]}: {n['percentage']:.2f}%{' (Contract)' if n['is_contract'] else ''}"
+                for i, n in enumerate(nodes[:3], 1)
+            ) if nodes else "No holder data available."
         )
-    os.remove(screenshot)
-    increment_scans()
+
+        # Largest transfer (from links)
+        links = bubble.get('links', [])
+        transfer_text = "💸 **Largest Transfer**: None\n"
+        if links and nodes:
+            # Find the link with the largest transfer amount (forward or backward)
+            largest_transfer = max(
+                links,
+                key=lambda x: max(float(x.get('forward', 0)), float(x.get('backward', 0))),
+                default=None
+            )
+            if largest_transfer:
+                source_idx = largest_transfer.get('source')
+                target_idx = largest_transfer.get('target')
+                # Ensure indices are valid
+                if (isinstance(source_idx, int) and isinstance(target_idx, int) and
+                        source_idx < len(nodes) and target_idx < len(nodes)):
+                    source_addr = nodes[source_idx]['address']
+                    target_addr = nodes[target_idx]['address']
+                    amount = max(float(largest_transfer.get('forward', 0)), float(largest_transfer.get('backward', 0)))
+                    transfer_text = (
+                        f"💸 **Largest Transfer**: {source_addr[:6]}... → {target_addr[:6]}... "
+                        f"({amount:.2f} tokens)\n"
+                    )
+
+            screenshot = await generate_screenshot(chain, address, context)  
+            if not screenshot:
+                return await update.message.reply_text("Failed to generate map.")  
+
+                # build caption
+            name = bubble.get("full_name", "N/A")
+            sym = bubble.get("symbol", "N/A")
+            score = meta.get("score", "N/A")
+            cex_pct = meta.get("cex", "N/A")
+            contract_pct = meta.get("contract", "N/A")
+            price = market.get("price", "N/A") if market else "N/A"
+            cap = market.get("cap", "N/A") if market else "N/A"
+            vol = market.get("vol", "N/A") if market else "N/A"  
+
+                # compute risk
+            try:
+                _score = float(score)
+                _vol = float(vol)
+                _cex = float(cex_pct)
+                _contract = float(contract_pct)
+            except Exception:
+                _score = _vol = _cex = _contract = 0
+            risk = compute_risk(_score, _vol, _cex, _contract)
+
+            caption = (
+            f"🔍 **SUPPLY ANALYSIS** 🔍\n\n"
+            f"**Token**: {name} ({sym}) 💎\n"
+            f"**Chain**: {chain.upper()} 🔗\n"
+            f"**Decentralization Score**: {score}/100 ⭐\n"
+            f"**Identified Supply**:\n {cex_pct}% in CEX 🏦 ,\n {contract_pct}% in Contracts 📜\n\n"
+            f"**Price**: ${price} 💲\n"
+            f"**Market Cap**: ${cap} 💰\n"
+            f"**Volume**: ${vol} 📊\n"
+            f"**Risk Level**: {risk}\n"
+            f"{top_holders_text}\n\n"
+            f"{transfer_text}"
+            )
+
+        url = f"https://app.bubblemaps.io/{chain}/token/{address}"
+        keyboard = [
+            [InlineKeyboardButton("🔗 View Bubblemap", url=url)],
+            [
+                InlineKeyboardButton("Top Holders", callback_data='top_holders'),
+                InlineKeyboardButton("Recent Transfers", callback_data='transfers'),
+                InlineKeyboardButton("Risk Analysis", callback_data='risk_analysis'),
+                InlineKeyboardButton("Related Tokens", callback_data='related_tokens')
+            ],
+            [InlineKeyboardButton("Cancel", callback_data='cancel')]
+        ]
+        with open(screenshot, "rb") as img:
+            await update.message.reply_photo(
+                photo=img,
+                caption=caption,
+                parse_mode="Markdown",
+                reply_markup=InlineKeyboardMarkup(keyboard),
+            )
+        os.remove(screenshot)
+        increment_scans()
+
+    except Exception as e:
+        await update.message.reply_text("An error occurred while processing your request. Please try again later.")
+        logging.error(f"Error in handle_contract_address: {str(e)}", exc_info=True)
+
+
+    # # screenshot
+    # screenshot = await generate_screenshot(chain, address, context)
+    # if not screenshot:
+    #     return await update.message.reply_text("Failed to generate map.")
+
+    # # build caption
+    # name = bubble.get("full_name", "N/A")
+    # sym = bubble.get("symbol", "N/A")
+    # score = meta.get("score", "N/A")
+    # cex_pct = meta.get("cex", "N/A")
+    # contract_pct = meta.get("contract", "N/A")
+    # price = market.get("price", "N/A") if market else "N/A"
+    # cap = market.get("cap", "N/A") if market else "N/A"
+    # vol = market.get("vol", "N/A") if market else "N/A"
+
+    # # compute risk
+    # try:
+    #     _score = float(score)
+    #     _vol = float(vol)
+    #     _cex = float(cex_pct)
+    #     _contract = float(contract_pct)
+    # except Exception:
+    #     _score = _vol = _cex = _contract = 0
+    # risk = compute_risk(_score, _vol, _cex, _contract)
+
+    # caption = (
+    #     f"🔍 **SUPPLY ANALYSIS** 🔍\n\n"
+    #     f"**Token**: {name} ({sym}) 💎\n"
+    #     f"**Chain**: {chain.upper()} 🔗\n"
+    #     f"**Decentralization Score**: {score}/100 ⭐\n"
+    #     f"**Identified Supply**:\n {cex_pct}% in CEX 🏦 ,\n {contract_pct}% in Contracts 📜\n\n"
+    #     f"**Price**: ${price} 💲\n"
+    #     f"**Market Cap**: ${cap} 💰\n"
+    #     f"**Volume**: ${vol} 📊\n"
+    #     f"**Risk Level**: {risk}\n"
+    #     f"{top_holders_text}\n\n"
+    #     f"{transfer_text}"
+    # )
+    # url = f"https://app.bubblemaps.io/{chain}/token/{address}"
+    # keyboard = [
+    #     [InlineKeyboardButton("🔗 View Bubblemap", url=url)],
+    #     [
+    #         InlineKeyboardButton("Top Holders", callback_data='top_holders'),
+    #         InlineKeyboardButton("Recent Transfers", callback_data='transfers'),
+    #         InlineKeyboardButton("Risk Analysis", callback_data='risk_analysis'),
+    #         InlineKeyboardButton("Related Tokens", callback_data='related_tokens')
+    #     ],
+    #     [InlineKeyboardButton("Cancel", callback_data='cancel')]
+    # ]
+    # # keyboard = InlineKeyboardMarkup([[InlineKeyboardButton("🔗 View Bubblemap", url=url)]])
+
+    # # send and clean up
+    # with open(screenshot, "rb") as img:
+    #     await update.message.reply_photo(
+    #         photo=img,
+    #         caption=caption,
+    #         parse_mode="Markdown",
+    #         reply_markup=InlineKeyboardMarkup(keyboard),
+    #     )
+    # os.remove(screenshot)
+    # increment_scans()

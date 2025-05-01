@@ -8,6 +8,7 @@ from core.playwright_sceenshot import init_browser, shutdown_browser
 from handlers.commands import start_cmd, help_cmd, add_favorite, list_favorites, remove_favorite, trending, stats
 from handlers.tutorial import tutorial_start, tutorial_callback, register_tutorial
 from handlers.typos_and_messages import handle_contract_address, handle_typos
+from handlers.advanced_commands import tokendetails, top_holders, button_handler, related_tokens
 
 load_dotenv()
 TOKEN = os.getenv("TELEGRAM_TOKEN")
@@ -43,6 +44,12 @@ def main():
     # Messages: catch token scans and typos
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_contract_address))
     app.add_handler(MessageHandler(filters.COMMAND, handle_typos))
+
+    # New advanced commands
+    app.add_handler(CommandHandler("tokendetails", tokendetails))
+    app.add_handler(CommandHandler("topholders", top_holders))
+    app.add_handler(CommandHandler("relatedtokens", related_tokens))
+    app.add_handler(CallbackQueryHandler(button_handler))  # Handles inline buttons
 
     # Scheduled cache cleanup
     app.job_queue.run_repeating(cleanup_cache, interval=int(os.getenv("CACHE_EXPIRY", 300)))

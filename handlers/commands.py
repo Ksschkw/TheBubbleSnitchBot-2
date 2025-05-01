@@ -22,6 +22,18 @@ async def start_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
 
 
+# async def help_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
+#     await update.message.reply_text(
+#         "🤖 **Help Menu** 🤖\n\n"
+#         "• /start - Welcome message\n"
+#         "• /tutorial - Step-by-step guided tour\n"
+#         "• /addfavorite <chain> <address> - Add a token to your watchlist\n"
+#         "• /favorites - List your saved tokens\n"
+#         "• /removefavorite <chain> <address> - Remove a token from favorites\n"
+#         "• /trending - See top trending tokens by volume\n"
+#         "• /stats - Check bot statistics",
+#         parse_mode="Markdown"
+#     )
 async def help_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
         "🤖 **Help Menu** 🤖\n\n"
@@ -31,7 +43,8 @@ async def help_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "• /favorites - List your saved tokens\n"
         "• /removefavorite <chain> <address> - Remove a token from favorites\n"
         "• /trending - See top trending tokens by volume\n"
-        "• /stats - Check bot statistics",
+        "• /stats - Check bot statistics\n"
+        "• /relatedtokens - View tokens related to the current token",
         parse_mode="Markdown"
     )
 

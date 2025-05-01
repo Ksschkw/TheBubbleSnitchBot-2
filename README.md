@@ -1,8 +1,8 @@
 # 🗺️ Bubblemaps Telegram Bot
 
 A Telegram bot for analyzing crypto tokens using Bubblemaps data. Generates bubble maps, provides market insights, and risk assessments.  
-**Demo Bot**: [@TheBubbleSnitch_bot](t.me/TheBubbleSnitch_bot) 
-**📖 Case Study**: Read the detailed write‑up [here](docs/CASE_STUDY.md).
+**Demo Bot**: [@TheBubbleSnitch_bot](t.me/TheBubbleSnitch_bot)  
+**📖 Case Study**: Read the detailed write-up [here](docs/CASE_STUDY.md).
 
 ## Table of Contents
 1. [Technical Overview](#1-technical-overview)  
@@ -35,7 +35,8 @@ A Telegram bot for analyzing crypto tokens using Bubblemaps data. Generates bubb
 - **AI Risk Assessment** (🟢 Low/🟡 Medium/🟠 Elevated/🔴 High)
 - **Favorites System** with price alerts
 - **Trending Tokens** leaderboard
-- **Tutorial** for everday users
+- **Tutorial** for everyday users
+- **Menu Buttons** for quick access to features without slash commands (slash commands still available)
 
    ### 🤖 Smart Command Correction
    We all make typos! The bot automatically suggests corrections for common mistakes:
@@ -49,6 +50,14 @@ A Telegram bot for analyzing crypto tokens using Bubblemaps data. Generates bubb
    - 🧠 **Context-Aware**: Understands 50+ common misspellings
    - 🚀 **Instant Help**: Suggests correct syntax immediately
 
+   ### 🆕 Menu Buttons
+   Added menu buttons for user convenience, providing quick access to features without slash commands, though slash command options are still available for power users:
+   - **Top Holders**: View the top token holders
+   - **Recent Transfers**: See the latest transfers between holders
+   - **Risk Analysis**: Get a detailed risk assessment
+   - **Related Tokens**: Discover tokens related to the current token
+   - **Cancel**: Clear the current token context
+
 ## 📋 Command Reference
 | Command | Parameters | Description | Example |
 |---------|------------|-------------|---------|
@@ -60,9 +69,11 @@ A Telegram bot for analyzing crypto tokens using Bubblemaps data. Generates bubb
 | `/removefavorite` | Chain + Contract | Remove token | `/removefavorite eth 0x1f984...` |
 | `/trending` | [metric] | Top tokens | `/trending volume` |
 | `/stats` | None | Usage stats | `/stats` |
+| `/tokendetails` | None | Detailed token info | `/tokendetails` |
+| `/topholders` | None | Top token holders | `/topholders` |
 
 ## 🖼️ Example Output
-![Analysis Example](imagedforreadme/example.png) 
+![Analysis Example](imagedforreadme/example.png)
 
 <a name="2-system-requirements"></a>
 ## 2. System Requirements
@@ -208,12 +219,6 @@ eth 0x1f9840a85d5af5bf1d1762f925bdaddc4201f984
 /stats
 ```
 
-<!-- ### Monitoring Endpoints
-```bash
-curl http://localhost:10000/health
-# Returns: {"status": "OK", "timestamp": "2024-03-15T12:34:56Z"}
-``` -->
-
 <a name="7-deployment-architecture"></a>
 ## 7. Deployment Architecture
 
@@ -313,4 +318,3 @@ git checkout -b feature/your-feature
 
 ## 📜 License
 MIT License - See LICENSE
-```

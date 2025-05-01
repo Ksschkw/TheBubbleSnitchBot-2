@@ -1,5 +1,3 @@
-# handlers/tutorial.py
-
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
 from telegram.ext import ContextTypes, CommandHandler, CallbackQueryHandler
 
@@ -14,7 +12,6 @@ async def tutorial_start(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
     )
     keyboard = [[InlineKeyboardButton("Next", callback_data="tutorial_next")]]
     await update.message.reply_text(text, reply_markup=InlineKeyboardMarkup(keyboard), parse_mode="Markdown")
-
 
 async def tutorial_callback(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
@@ -48,11 +45,18 @@ async def tutorial_callback(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
             "Use /stats for scan counts and performance 💰.\n"
             "Manage your watchlist with /removefavorite 🗑️."
         )
+    elif step == 4:
+        text = (
+            "🔍 **Step 4: Token Analysis** 🔍\n\n"
+            "After selecting a token, try these:\n"
+            "• /tokendetails - Detailed token info\n"
+            "• /topholders - Top token holders\n"
+            "• /relatedtokens - Tokens linked to the current token"
+        )
     else:
         text = (
             "🎉 **Tutorial Complete!** 🎉\n\n"
-            "Features recap:\n"
-            "/addfavorite, /favorites, /removefavorite, /trending, /stats, and more.\n"
+            "You've mastered token scans, favorites, trending checks, stats, and analysis.\n"
             "Type /tutorial anytime for a refresher. Keep rockin'! 🤘"
         )
         keyboard = [[InlineKeyboardButton("Restart Tutorial", callback_data="tutorial_restart")]]
