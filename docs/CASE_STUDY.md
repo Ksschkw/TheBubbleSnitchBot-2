@@ -61,14 +61,14 @@ Here’s how to use the bot with the Magic Eden (ME) token on Solana (`sol MEFNB
 
 ### 4.1 Starting the Bot  
 Send `/start` to initialize the bot.  
-![Start Reply](./assets/start.jpg)  
+![Start Reply&Supply Analysis Reply](./assets/start.png)  
 *The bot responds with a welcome message and instructions.*
 
 ### 4.2 Invocation & Reply  
 ```text
 sol MEFNBXixkEbait3xn9bkm8WsJzXtVsaJEn4c8Sam21u
 ```  
-![Supply Analysis Reply](./assets/reply.png)  
+<!-- ![Supply Analysis Reply](./assets/start.png)   -->
 ```text
 🔍 SUPPLY ANALYSIS 🔍
 
