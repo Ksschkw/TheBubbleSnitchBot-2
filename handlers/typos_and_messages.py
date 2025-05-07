@@ -90,6 +90,7 @@ async def handle_typos(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def handle_contract_address(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    loading_message = await update.message.reply_text("⏳ Loading bubblemap with token details...")
     try:
         text = update.message.text.strip().split()
         if len(text) != 2:
@@ -107,6 +108,7 @@ async def handle_contract_address(update: Update, context: ContextTypes.DEFAULT_
         if not bubble or not meta or not market:
             await update.message.reply_text("Failed to fetch token data.")
             return
+        
 
         # Store token context
         context.user_data['current_token'] = {'chain': chain, 'address': address}
@@ -194,6 +196,7 @@ async def handle_contract_address(update: Update, context: ContextTypes.DEFAULT_
             [InlineKeyboardButton("Cancel", callback_data='cancel')]
         ]
         with open(screenshot, "rb") as img:
+            await loading_message.delete()
             await update.message.reply_photo(
                 photo=img,
                 caption=caption,
