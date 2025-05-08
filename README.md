@@ -92,6 +92,7 @@ OS: Linux/Windows/macOS (Docker recommended)
 | Playwright | 1.44+ | Headless browser control |
 | Bubblemaps API | Legacy | Token distribution data |
 | CoinGecko API | v3 | Market data feed |
+|Matplotlib	|3.8.4|	Generating visual charts for data|
 
 <a name="3-installation-guide"></a>
 ## 3. Installation Guide
@@ -315,6 +316,7 @@ git checkout -b feature/your-feature
 - Type hints for all functions
 - Docstrings following Google style
 - Unit test coverage >80%
+- Modularity
 
 ## 📜 License
 MIT License - See LICENSE

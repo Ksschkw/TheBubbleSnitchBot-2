@@ -4,10 +4,8 @@ ENV PYTHONUNBUFFERED=1 \
     PIP_NO_CACHE_DIR=1
 RUN apt-get update \
  && apt-get install -y --no-install-recommends \
-    xvfb          \   
-    # X virtual framebuffer
-    xauth         \   
-    # for xvfb-run’s auth
+    xvfb          \
+    xauth         \
     ca-certificates \
     fonts-liberation \
     libasound2 \
@@ -27,15 +25,15 @@ RUN apt-get update \
     libxi6 \
     libxss1 \
     libgconf-2-4 \
+    libpng-dev \
+    libfreetype6-dev \
     wget unzip curl \
-    gcc g++ make python3-dev \  
-    # for any native Python extensions
+    gcc g++ make python3-dev \
  && rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt .
 RUN pip install --upgrade pip \
  && pip install -r requirements.txt
-
 
 RUN pip install playwright \
  && playwright install --with-deps chromium

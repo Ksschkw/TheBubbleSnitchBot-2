@@ -26,6 +26,35 @@ async def tokendetails(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
     await update.message.reply_text(message, parse_mode="Markdown")
 
+# async def top_holders(update: Update, context: ContextTypes.DEFAULT_TYPE):
+#     token = context.user_data.get('current_token')
+#     if not token:
+#         await (update.message.reply_text if update.message else update.callback_query.message.reply_text)(
+#             "No token selected. Please input a <chain> <address> first."
+#         )
+#         return
+
+#     chain, address = token['chain'], token['address']
+#     bubble = await fetch_bubble(chain, address)
+#     if not bubble or not bubble.get('nodes'):
+#         await (update.message.reply_text if update.message else update.callback_query.message.reply_text)(
+#             "No holder data available."
+#         )
+#         return
+
+#     nodes = bubble['nodes'][:5]  # Top 5 holders
+#     message = "🏆 **Top Holders** 🏆\n\n" + "\n".join(
+#         f"{i}. {n['address'][:6]}...{n['address'][-4:]}: {n['percentage']:.2f}%{' (Contract)' if n['is_contract'] else ''}"
+#         for i, n in enumerate(nodes, 1)
+#     )
+#     await (update.message.reply_text if update.message else update.callback_query.message.reply_text)(
+#         message, parse_mode="Markdown"
+#     )
+import matplotlib.pyplot as plt
+import io
+from telegram import Update
+from telegram.ext import ContextTypes
+
 async def top_holders(update: Update, context: ContextTypes.DEFAULT_TYPE):
     token = context.user_data.get('current_token')
     if not token:
@@ -43,12 +72,45 @@ async def top_holders(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return
 
     nodes = bubble['nodes'][:5]  # Top 5 holders
+    # Text message for top holders
     message = "🏆 **Top Holders** 🏆\n\n" + "\n".join(
         f"{i}. {n['address'][:6]}...{n['address'][-4:]}: {n['percentage']:.2f}%{' (Contract)' if n['is_contract'] else ''}"
         for i, n in enumerate(nodes, 1)
     )
+
+    # Create a bar chart
+    labels = [f"{n['address'][:6]}...{n['address'][-4:]}{' (C)' if n['is_contract'] else ''}" for n in nodes]
+    sizes = [n['percentage'] for n in nodes]
+    colors = ['#ff9999', '#66b3ff', '#99ff99', '#ffcc99', '#c2c2f0']  # Custom colors
+
+    plt.figure(figsize=(10, 6))
+    bars = plt.bar(labels, sizes, color=colors)
+    plt.xlabel("Holders")
+    plt.ylabel("Percentage (%)")
+    plt.title("Top 5 Holders Distribution")
+    plt.xticks(rotation=45, ha='right')
+    plt.grid(axis='y', linestyle='--', alpha=0.7)
+
+    # Add percentage labels on top of bars
+    for bar in bars:
+        yval = bar.get_height()
+        plt.text(bar.get_x() + bar.get_width()/2, yval + 0.5, f'{yval:.2f}%', ha='center', va='bottom')
+
+    plt.tight_layout()
+
+    # Save the chart to a bytes buffer
+    img_buffer = io.BytesIO()
+    plt.savefig(img_buffer, format='png', bbox_inches='tight')
+    img_buffer.seek(0)
+    plt.close()
+
+    # Send the text message
     await (update.message.reply_text if update.message else update.callback_query.message.reply_text)(
         message, parse_mode="Markdown"
+    )
+    # Send the chart image
+    await (update.message.reply_photo if update.message else update.callback_query.message.reply_photo)(
+        photo=img_buffer
     )
 
 async def transfers(update: Update, context: ContextTypes.DEFAULT_TYPE):

@@ -105,8 +105,9 @@ Click the "Top Holders" button:
 1. AzcBxq...91jn: 30.64%
 2. AcG5pZ...mdXJ: 21.27%
 3. FcfYR3...vuLX: 16.13%
-4. 32WMXy...Hzkw: 8.21%
+4. 32WMXy...Hzkw: 8.37%
 5. 7ooPG7...GhUr: 7.89%
+   With a simple bar-chart below
 ```
 
 ### 4.5 Recent Transfers (Button)  
