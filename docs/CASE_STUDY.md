@@ -1,9 +1,9 @@
 > **Executive Summary:**  
-> thebubblesnitchbot is a Telegram bot that automates on-chain supply audits by fetching Bubblemaps graphs and parsing key metrics, all via a simple command. In our Magic Eden (ME) Solana example, the bot returns a **Decentralization Score: 2.47 / 100**, **Identified Supply: 1.22% CEX**, **0.63% Contracts**, **Price: $1.089**, **24h Volume: $79.64M**, **Market Cap: $162.69M**, plus an **🟠 Elevated** risk level computed by a weighted multi-factor algorithm. Beyond `<chain> <contract_address>`, it supports `/addfavorite`, `/favorites`, `/removefavorite`, `/trending`, `/tutorial`, `/tokendetails`, `/topholders`, and smart typo correction for over 50 variants, enhanced with inline buttons for deeper insights.
+> thebubblesnitchbot is a Telegram bot that automates on-chain supply audits by fetching Bubblemaps graphs and parsing key metrics, all via a simple command. In our Magic Eden (ME) Solana example, the bot returns a **Decentralization Score: 2.47 / 100**, **Identified Supply: 1.22% CEX**, **0.63% Contracts**, **Price: $1.089**, **24h Volume: $79.64M**, **Market Cap: $162.69M**, plus an **🟠 Elevated** risk level computed by a weighted multi-factor algorithm. Beyond `<chain> <contract_address>`, it supports `/addfavorite`, `/favorites`, `/removefavorite`, `/trending`, `/tutorial`, and smart typo correction for over 50 variants, enhanced with inline buttons for deeper insights.
 
 ## 1. Introduction  
 Bubblemaps is the first visual supply-auditing tool for DeFi tokens and NFTs, rendering the top 250 holders as interactive bubbles to reveal concentration and wallet interconnections.  
-thebubblesnitchbot wraps Bubblemaps’ power into Telegram, using `python-telegram-bot` v21+ for command handling and Playwright for headless screenshots.
+TheBubbleSnitchbot wraps Bubblemaps’ power into Telegram, using `python-telegram-bot` v21+ for command handling and Playwright for headless screenshots.
 
 ## 2. Bot Capabilities  
 ### 2.1 Core Analysis  
