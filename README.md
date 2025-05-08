@@ -69,8 +69,8 @@ A Telegram bot for analyzing crypto tokens using Bubblemaps data. Generates bubb
 | `/removefavorite` | Chain + Contract | Remove token | `/removefavorite eth 0x1f984...` |
 | `/trending` | [metric] | Top tokens | `/trending volume` |
 | `/stats` | None | Usage stats | `/stats` |
-| `/tokendetails` | None | Detailed token info | `/tokendetails` |
-| `/topholders` | None | Top token holders | `/topholders` |
+<!-- | `/tokendetails` | None | Detailed token info | `/tokendetails` |
+| `/topholders` | None | Top token holders | `/topholders` | -->
 
 ## 🖼️ Example Output
 ![Analysis Example](imagedforreadme/example.png)
