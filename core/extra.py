@@ -30,11 +30,12 @@ def compute_risk(score, vol, cex, contract):
         0.2 * (1 - contract/100) +   # Contract risk (20% weight)
         0.1 * (min(vol/5e6, 1))     # Liquidity (10% weight, $5M cap)
     )
-    if risk_score >= 0.75:
-        return "🟢 Low"              # >75% composite score
-    elif risk_score >= 0.55:
-        return "🟡 Medium"           # 55-74% composite score
-    elif risk_score >= 0.35:
+    if risk_score >= 0.80:
+        return "🟢 Low"              # >80% composite score
+    elif risk_score >= 0.65:
+        return "🟡 Medium"           # 65-79% composite score
+    elif risk_score >= 0.40:
         return "🟠 Elevated"         # New tier for granularity
     else:
-        return "🔴 High"             # <35% composite score
+        return "🔴 High"             # <40% composite score
+       
