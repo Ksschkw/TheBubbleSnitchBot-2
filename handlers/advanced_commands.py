@@ -168,7 +168,7 @@ async def risk_analysis(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "⚠️ **Risk Analysis** ⚠️\n\n"
         f"Top 10 Holders Ownership: {top_10_percent:.2f}%\n"
         f"Contract Ownership: {contract_percent:.2f}%\n"
-        f"Risk Level: {'🔴 High' if top_10_percent > 50 else '🟠 Elevated' if top_10_percent > 30 else '🟢 Low'}"
+        f"Risk Level: {'🔴 High' if top_10_percent > 40 else '🟡 Medium' if top_10_percent > 35 else '🟠 Elevated' if top_10_percent > 20 else '🟢 Low'}"
     )
     await update.callback_query.message.reply_text(message, parse_mode="Markdown")
 
